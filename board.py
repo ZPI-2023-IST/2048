@@ -5,10 +5,10 @@ import copy
 
 
 class Direction(Enum):
-    UP = 0
-    DOWN = 1
-    LEFT = 2
-    RIGHT = 3
+    UP = 'w'
+    DOWN = 's'
+    LEFT = 'a'
+    RIGHT = 'd'
 
 class State(Enum):
     ONGOING = 0
@@ -29,10 +29,10 @@ class Board:
             self.empty_cells = rows * columns
             self.spawn()
             self.spawn()
-        self.possible_moves = []
+        self.possible_moves = {}
         self.set_possible_moves()
 
-    def print_board(self) -> Node(None):
+    def print_board(self) -> None:
         for row in self.board:
             print('|', end='')
             for elem in row:
@@ -42,7 +42,7 @@ class Board:
     def start_game(self, rows=4, columns=4) -> None:
         self.__init__(rows, columns)
 
-    def set_empty_cells(self) -> Node(None):
+    def set_empty_cells(self) -> None:
         self.empty_cells = sum([row.count(Node(None)) for row in self.board])
     
     def game_status(self) -> State:
@@ -61,15 +61,20 @@ class Board:
         value = 4 if random.randint(1, 10) == 10 else 2
         position = random.randint(0, self.empty_cells - 1)
         row_index = int(position/self.rows)
-        position %= self.rows
+        position_2 = position % self.rows
 
-        while self.board[row_index][position] != Node(None):
-            position += 1
-            if position == self.cols:
-                position = 0
-                row_index += 1
+        try:
+            while self.board[row_index][position_2] != Node(None):
+                position_2 += 1
+                if position_2 == self.cols:
+                    position_2 = 0
+                    row_index += 1
+        except IndexError:
+            self.print_board()
+            print(self.empty_cells, position, row_index, position_2)
+            quit(1)
 
-        self.board[row_index][position] = Node(value)
+        self.board[row_index][position_2] = Node(value)
         
     # [
     #   [Node(None), Node(None),    2, Node(None)],
@@ -79,21 +84,13 @@ class Board:
     # ]
 
     def set_possible_moves(self) -> None:
-        moves = []
-
         if self.game_status() != State.ONGOING:
-            return moves
+            self.possible_moves = {}
 
-        if self.move_left(save=False):
-            moves.append(Direction.LEFT)
-        if self.move_right(save=False):
-            moves.append(Direction.RIGHT)
-        if self.move_up(save=False):
-            moves.append(Direction.UP)
-        if self.move_down(save=False):
-            moves.append(Direction.DOWN)
-
-        self.possible_moves = moves
+        self.move_left()
+        self.move_right()
+        self.move_up()
+        self.move_down()
 
     def make_move(self, direction: Direction) -> None:
         if direction not in self.possible_moves:
@@ -102,24 +99,21 @@ class Board:
         
         match direction:
             case Direction.UP:
-                self.move_up()
-                self.spawn()
-                self.set_possible_moves()
+                self.board = self.possible_moves[Direction.UP]
             case Direction.DOWN:
-                self.move_down()
-                self.spawn()
-                self.set_possible_moves()
+                self.board = self.possible_moves[Direction.DOWN]
             case Direction.LEFT:
-                self.move_left()
-                self.spawn()
-                self.set_possible_moves()
+                self.board = self.possible_moves[Direction.LEFT]
             case Direction.RIGHT:
-                self.move_right()
-                self.spawn()
-                self.set_possible_moves()
+                self.board = self.possible_moves[Direction.RIGHT]
+        self.spawn()
+        self.set_empty_cells()
+        self.set_possible_moves()
 
-    def move_left(self, save=True) -> bool:
+    def move_left(self, transposed=False) -> None:
         new_board = copy.deepcopy(self.board)
+        if transposed:
+            new_board = self.transpose(new_board)
         for row in new_board:
             while Node(None) in row:
                 row.remove(Node(None))
@@ -135,16 +129,22 @@ class Board:
             while len(row) < self.cols:
                 row.append(Node(None))
 
+        direction = Direction.UP if transposed else Direction.LEFT
         if new_board == self.board:
-            return False
-        if save:
-            self.board = new_board
-        return True
-                    
+            try:
+                self.possible_moves.pop(direction)
+            except KeyError:
+                pass
+        else:
+            if transposed:
+                new_board = self.transpose(new_board)
+            self.possible_moves[direction] = new_board
 
 
-    def move_right(self, save=True) -> bool:
+    def move_right(self, transposed=False) -> None:
         new_board = copy.deepcopy(self.board)
+        if transposed:
+            new_board = self.transpose(new_board)
         for row in new_board:
             while Node(None) in row:
                 row.remove(Node(None))
@@ -159,23 +159,23 @@ class Board:
                 row.remove(Node(None))
             while len(row) < self.cols:
                 row.insert(0, Node(None))
+
+        direction = Direction.DOWN if transposed else Direction.RIGHT
         if new_board == self.board:
-            return False
-        if save:
-            self.board = new_board
-        return True
-
-    def transpose(self) -> None:
-        self.board = list(map(list, zip(*self.board)))
-
-    def move_up(self, save=True) -> bool:
-        self.transpose()
-        result = self.move_left(save)
-        self.transpose()
-        return result
+            try:
+                self.possible_moves.pop(direction)
+            except KeyError:
+                pass
+        else:
+            if transposed:
+                new_board = self.transpose(new_board)
+            self.possible_moves[direction] = new_board
     
-    def move_down(self, save=True) -> bool:
-        self.transpose()
-        result = self.move_right(save)
-        self.transpose()
-        return result
+    def transpose(self, board) -> None:
+        return list(map(list, zip(*board)))
+
+    def move_up(self) -> None:
+        self.move_left(True)
+    
+    def move_down(self) -> None:
+        self.move_right(True)

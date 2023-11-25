@@ -1,12 +1,20 @@
 from board import Board, Direction
-from node import Node
+# from node import Node
 
-a = Board()
+a = Board(
+    
+#     board=[
+#     [Node(4), Node(None), Node(None), Node(None)],
+#     [Node(None), Node(32), Node(4), Node(None)],
+#     [Node(4), Node(8), Node(64), Node(4)],
+#     [Node(2), Node(4), Node(2), Node(2)],
+# ]
+)
 
 a.print_board()
 
 while a.game_status().value == 0:
-    print("Possible moves: ", a.possible_moves)
+    print("Possible moves: ", a.possible_moves.keys())
     direction = input("Enter direction: (w/s/a/d)")
     match direction:
         case "w":
@@ -22,6 +30,7 @@ while a.game_status().value == 0:
             print(direction)
             continue
     a.print_board()
+    print(a.empty_cells)
     print('\n')
 
 if a.game_status().value  == 1:
