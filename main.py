@@ -5,7 +5,7 @@ a = Board()
 a.start_game()
 a.print_board()
 
-while True:
+while a.game_status() == 0:
     print("Possible moves: ", a.possible_moves)
     direction = input("Enter direction: (w/s/a/d)")
     match direction:
@@ -22,11 +22,9 @@ while True:
             print(direction)
             continue
     a.print_board()
-    print("Empty cells: ", a.empty_cells)
-    print("Game status: ", a.game_status())
-    if a.game_status() == "LOST":
-        break
-    elif a.game_status() == "WON":
-        print("You won!")
-        break
     print('\n')
+
+if a.game_status() == 1:
+    print("You win!")
+else:
+    print("You lose!")
