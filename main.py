@@ -1,12 +1,7 @@
 from board import Board, Direction
 from node import Node
 
-a = Board(board=[
-    [Node(2), Node(None), Node(2), Node(8)],
-    [Node(None), Node(None), Node(None), Node(4)],
-    [Node(None), Node(None), Node(None), Node(2)],
-    [Node(2), Node(None), Node(None), Node(None)],
-])
+a = Board()
 
 a.print_board()
 
