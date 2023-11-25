@@ -7,7 +7,7 @@ a.print_board()
 
 while True:
     print("Possible moves: ", a.possible_moves)
-    direction = input("Enter direction: ")
+    direction = input("Enter direction: (w/s/a/d)")
     match direction:
         case "w":
             a.make_move(Direction.UP)
