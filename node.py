@@ -7,4 +7,8 @@ class Node:
         return self.value
 
     def __repr__(self) -> str:
-        return str(self.value).ljust(4)
+        returned = '' if self.value is None else str(self.value)
+        return returned.ljust(4)
+    
+    def __eq__(self, other: 'Node') -> bool:
+        return self.value == other.value

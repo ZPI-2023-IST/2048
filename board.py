@@ -1,6 +1,7 @@
 from node import Node
 import random
 from enum import Enum
+import copy
 
 
 class Direction(Enum):
@@ -15,25 +16,35 @@ class State(Enum):
     LOST = 2
 
 class Board:
-    def __init__(self, rows=4, columns=4):
-        self.rows = rows
-        self.cols = columns
-        self.board = [[None for _ in range(columns)] for _ in range(rows)]
-        self.empty_cells = rows * columns
-        self.spawn()
-        self.spawn()
+    def __init__(self, rows=4, columns=4, board=Node(None)):
+        if board:
+            self.rows = len(board)
+            self.cols = len(board[0])
+            self.board = board
+            self.empty_cells = sum([row.count(Node(None)) for row in self.board])
+        else:
+            self.rows = rows
+            self.cols = columns
+            self.board = [[Node(None) for _ in range(columns)] for _ in range(rows)]
+            self.empty_cells = rows * columns
+            self.spawn()
+            self.spawn()
         self.possible_moves = []
         self.set_possible_moves()
+        print(self.board)
 
-    def print_board(self) -> None:
+    def print_board(self) -> Node(None):
         for row in self.board:
-            print(row)
+            print('|', end='')
+            for elem in row:
+                print(elem, end='|')
+            print('\n')
 
     def start_game(self, rows=4, columns=4) -> None:
         self.__init__(rows, columns)
 
-    def set_empty_cells(self) -> None:
-        self.empty_cells = sum([row.count(None) for row in self.board])
+    def set_empty_cells(self) -> Node(None):
+        self.empty_cells = sum([row.count(Node(None)) for row in self.board])
     
     def game_status(self) -> State:
         if self.empty_cells > 0:
@@ -53,7 +64,7 @@ class Board:
         row_index = int(position/self.rows)
         position %= self.rows
 
-        while self.board[row_index][position] is not None:
+        while self.board[row_index][position] != Node(None):
             position += 1
             if position == self.cols:
                 position = 0
@@ -62,10 +73,10 @@ class Board:
         self.board[row_index][position] = Node(value)
         
     # [
-    #   [None, None,    2, None],
-    #   [None, None, None, None],
-    #   [None,    4, None,    2],
-    #   [8,      16, None,    2],
+    #   [Node(None), Node(None),    2, Node(None)],
+    #   [Node(None), Node(None), Node(None), Node(None)],
+    #   [Node(None),    4, Node(None),    2],
+    #   [8,      16, Node(None),    2],
     # ]
 
     def set_possible_moves(self) -> None:
@@ -74,39 +85,20 @@ class Board:
         if self.game_status() != State.ONGOING:
             return moves
 
-        for row in self.board:
-            none_count = row.count(None)
-            if none_count == 0 or row[-none_count:].count(None) == none_count:
-                continue
-            moves.append(Direction.RIGHT)
-            break
-
-        for row in self.board:
-            none_count = row.count(None)
-            if none_count == 0 or row[:none_count].count(None) == none_count:
-                continue
+        if self.move_left(save=False):
             moves.append(Direction.LEFT)
-            break
-
-        for i in range(self.cols):
-            none_count = sum([row[i] is None for row in self.board])
-            if none_count == 0 or [row[i] for row in self.board][-none_count:].count(None) == none_count:
-                continue
-            moves.append(Direction.DOWN)
-            break
-
-        for i in range(self.cols):
-            none_count = sum([row[i] is None for row in self.board])
-            if none_count == 0 or [row[i] for row in self.board][:none_count].count(None) == none_count:
-                continue
+        if self.move_right(save=False):
+            moves.append(Direction.RIGHT)
+        if self.move_up(save=False):
             moves.append(Direction.UP)
-            break
+        if self.move_down(save=False):
+            moves.append(Direction.DOWN)
 
         self.possible_moves = moves
 
     def make_move(self, direction: Direction) -> None:
         if direction not in self.possible_moves:
-            print(self.possible_moves)
+            self.set_possible_moves()
             raise ValueError("Invalid direction")
         
         match direction:
@@ -127,48 +119,64 @@ class Board:
                 self.spawn()
                 self.set_possible_moves()
 
-    def move_left(self) -> None:
-        for row in self.board:
-            while None in row:
-                row.remove(None)
+    def move_left(self, save=True) -> bool:
+        new_board = copy.deepcopy(self.board)
+        for row in new_board:
+            while Node(None) in row:
+                row.remove(Node(None))
             for i, node in enumerate(row):
                 if i == len(row) - 1:
                     pass
                 elif node and node.value == row[i+1].value:
                     if node.double() == 2048:
                         print('gg')
-                    row[i+1] = None
-            while None in row:
-                row.remove(None)
+                    row[i+1] = Node(None)
+            while Node(None) in row:
+                row.remove(Node(None))
             while len(row) < self.cols:
-                row.append(None)
+                row.append(Node(None))
+
+        if new_board == self.board:
+            return False
+        if save:
+            self.board = new_board
+        return True
                     
 
-    def move_right(self) -> None:
-        for row in self.board:
-            while None in row:
-                row.remove(None)
+
+    def move_right(self, save=True) -> bool:
+        new_board = copy.deepcopy(self.board)
+        for row in new_board:
+            while Node(None) in row:
+                row.remove(Node(None))
             for i, node in enumerate(row):
                 if i == len(row) - 1:
                     continue
                 elif node and node.value == row[i+1].value:
                     if node.double() == 2048:
                         print('gg')
-                    row[i+1] = None
-            while None in row:
-                row.remove(None)
+                    row[i+1] = Node(None)
+            while Node(None) in row:
+                row.remove(Node(None))
             while len(row) < self.cols:
-                row.insert(0, None)
+                row.insert(0, Node(None))
+        if new_board == self.board:
+            return False
+        if save:
+            self.board = new_board
+        return True
 
     def transpose(self) -> None:
         self.board = list(map(list, zip(*self.board)))
 
-    def move_up(self) -> None:
+    def move_up(self, save=True) -> bool:
         self.transpose()
-        self.move_left()
+        result = self.move_left(save)
         self.transpose()
+        return result
     
-    def move_down(self) -> None:
+    def move_down(self, save=True) -> bool:
         self.transpose()
-        self.move_right()
+        result = self.move_right(save)
         self.transpose()
+        return result
