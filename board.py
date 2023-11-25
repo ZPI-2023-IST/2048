@@ -31,7 +31,6 @@ class Board:
             self.spawn()
         self.possible_moves = []
         self.set_possible_moves()
-        print(self.board)
 
     def print_board(self) -> Node(None):
         for row in self.board:
