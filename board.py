@@ -16,7 +16,7 @@ class State(Enum):
     LOST = 2
 
 class Board:
-    def __init__(self, rows=4, columns=4, board=Node(None)):
+    def __init__(self, rows=4, columns=4, board=None):
         if board:
             self.rows = len(board)
             self.cols = len(board[0])
