@@ -3,12 +3,12 @@ from node import Node
 
 a = Board(
     
-    board=[
-      [Node(2), Node(4),Node(16), Node(4)],
-      [Node(8), Node(32), Node(2), Node(16)],
-      [Node(4),Node(64), Node(16),Node(4)],
-      [Node(2),Node(8), Node(32),Node(64)],
-    ]
+    # board=[
+    #   [Node(2), Node(4),Node(16), Node(4)],
+    #   [Node(8), Node(32), Node(2), Node(16)],
+    #   [Node(4),Node(64), Node(16),Node(4)],
+    #   [Node(2),Node(8), Node(32),Node(64)],
+    # ]
 )
 
 a.print_board()
