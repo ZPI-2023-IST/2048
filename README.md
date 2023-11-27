@@ -33,3 +33,7 @@ When using this module you can use following functions:
 5. start_game() -> None:
 
     Overwrites current object, invoking constructor with default values and resetting every variable.
+
+## Package name
+
+The package is named game2048
