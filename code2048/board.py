@@ -20,6 +20,8 @@ class Board:
             self.board = board
             self.empty_cells = sum([row.count(Node(None)) for row in self.board])
         else:
+            if rows < 2 or columns < 2:
+                raise ValueError("Board must be at least 2x2")
             self.rows = rows
             self.cols = columns
             self.board = [[Node(None) for _ in range(columns)] for _ in range(rows)]
@@ -47,7 +49,7 @@ class Board:
         return False
     
     def game_status(self) -> State:
-        if self.possible_moves:
+        if self.empty_cells > 0 or self.possible_moves:
             return State.ONGOING
         if self.has_won():
             return State.WON
@@ -77,6 +79,7 @@ class Board:
             quit(1)
 
         self.board[row_index][position_2] = Node(value)
+        self.empty_cells -= 1
 
     def set_possible_moves(self) -> None:
         if self.game_status() != State.ONGOING:
@@ -172,7 +175,7 @@ class Board:
                 new_board = self.transpose(new_board)
             self.possible_moves[direction] = new_board
     
-    def transpose(self, board) -> None:
+    def transpose(self, board) -> list:
         return list(map(list, zip(*board)))
 
     def move_up(self) -> None:
