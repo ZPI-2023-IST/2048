@@ -3,17 +3,14 @@ import random
 from enum import Enum
 import copy
 
+from Game import State
+
 
 class Direction(Enum):
     UP = 'w'
     DOWN = 's'
     LEFT = 'a'
     RIGHT = 'd'
-
-class State(Enum):
-    ONGOING = 0
-    WON = 1
-    LOST = 2
 
 class Board:
     def __init__(self, rows=4, columns=4, board=None):
@@ -39,17 +36,22 @@ class Board:
                 print(elem, end='|')
             print('\n')
 
-    def start_game(self, rows=4, columns=4) -> None:
-        self.__init__(rows, columns)
-
     def set_empty_cells(self) -> None:
         self.empty_cells = sum([row.count(Node(None)) for row in self.board])
+
+    def has_won(self) -> bool:
+        for row in self.board:
+            for node in row:
+                if node and node.value == 2048:
+                    return True
+        return False
     
     def game_status(self) -> State:
-        if self.empty_cells > 0:
+        if self.possible_moves:
             return State.ONGOING
-        else:
-            return State.LOST
+        if self.has_won():
+            return State.WON
+        return State.LOST
     
     def spawn(self) -> None:
         status = self.game_status()
@@ -75,17 +77,12 @@ class Board:
             quit(1)
 
         self.board[row_index][position_2] = Node(value)
-        
-    # [
-    #   [Node(None), Node(None),    2, Node(None)],
-    #   [Node(None), Node(None), Node(None), Node(None)],
-    #   [Node(None),    4, Node(None),    2],
-    #   [8,      16, Node(None),    2],
-    # ]
 
     def set_possible_moves(self) -> None:
         if self.game_status() != State.ONGOING:
             self.possible_moves = {}
+
+        self.possible_moves = {}
 
         self.move_left()
         self.move_right()
@@ -106,13 +103,16 @@ class Board:
                 self.board = self.possible_moves[Direction.LEFT]
             case Direction.RIGHT:
                 self.board = self.possible_moves[Direction.RIGHT]
-        self.spawn()
         self.set_empty_cells()
+        self.spawn()
+        self.empty_cells -= 1
         self.set_possible_moves()
 
     def move_left(self, transposed=False) -> None:
         new_board = copy.deepcopy(self.board)
+        comparable = copy.deepcopy(self.board)
         if transposed:
+            comparable = self.transpose(comparable)
             new_board = self.transpose(new_board)
         for row in new_board:
             while Node(None) in row:
@@ -130,7 +130,7 @@ class Board:
                 row.append(Node(None))
 
         direction = Direction.UP if transposed else Direction.LEFT
-        if new_board == self.board:
+        if new_board == comparable:
             try:
                 self.possible_moves.pop(direction)
             except KeyError:
@@ -143,8 +143,10 @@ class Board:
 
     def move_right(self, transposed=False) -> None:
         new_board = copy.deepcopy(self.board)
+        comparable = copy.deepcopy(self.board)
         if transposed:
             new_board = self.transpose(new_board)
+            comparable = self.transpose(comparable)
         for row in new_board:
             while Node(None) in row:
                 row.remove(Node(None))
@@ -152,8 +154,7 @@ class Board:
                 if i == len(row) - 1:
                     continue
                 elif node and node.value == row[i+1].value:
-                    if node.double() == 2048:
-                        print('gg')
+                    node.double()
                     row[i+1] = Node(None)
             while Node(None) in row:
                 row.remove(Node(None))
@@ -161,7 +162,7 @@ class Board:
                 row.insert(0, Node(None))
 
         direction = Direction.DOWN if transposed else Direction.RIGHT
-        if new_board == self.board:
+        if new_board == comparable:
             try:
                 self.possible_moves.pop(direction)
             except KeyError:
