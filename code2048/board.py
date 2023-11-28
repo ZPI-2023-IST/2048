@@ -127,7 +127,7 @@ class Board:
         self.move_up()
         self.move_down()
 
-    def make_move(self, direction: char) -> None:
+    def make_move(self, direction: String) -> None:
         """
         Set the possible moves based on the current state of the board.
         """
