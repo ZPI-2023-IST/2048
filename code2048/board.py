@@ -1,9 +1,9 @@
-from node import Node
+from code2048.node import Node
 import random
 from enum import Enum
 import copy
 
-from Game import State
+from game import State
 
 
 class Direction(Enum):

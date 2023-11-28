@@ -1,8 +1,8 @@
-from Game import Game, State
-from board import Board
+from code2048.game import Game, State
+from code2048.board import Board
 
 
-class game2048(Game):
+class Game2048(Game):
     def __init__(self, board: Board = None, rows: int = 4, cols: int = 4) -> None:
         self.board = board if board else Board(rows, cols)
 
