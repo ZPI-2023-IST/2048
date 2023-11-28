@@ -1,8 +1,8 @@
-from Game import Game, State
-from board import Board
+from code2048.game import Game, State
+from code2048.board import Board
 
 
-class game2048(Game):
+class Game2048(Game):
     def __init__(self, board: Board = None, rows: int = 4, cols: int = 4) -> None:
         self.board = board if board else Board(rows, cols)
 
@@ -10,7 +10,7 @@ class game2048(Game):
         """
         Provides possible moves as a list of w/s/a/d characters meaning up/down/left/right respectively
         """
-        return list(self.board.possible_moves.values())
+        return [key.value for key in self.board.possible_moves.keys()]
 
     def make_move(self, move: tuple) -> bool:
         """
@@ -22,7 +22,7 @@ class game2048(Game):
         """
 
         if move[0] in self.get_moves():
-            self.board.make_move(move)
+            self.board.make_move(move[0])
             return True
         return False
 

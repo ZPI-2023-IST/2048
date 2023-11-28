@@ -1,9 +1,9 @@
-from node import Node
+from code2048.game import State
+from code2048.node import Node
 import random
 from enum import Enum
 import copy
 
-from Game import State
 
 
 class Direction(Enum):
@@ -127,11 +127,11 @@ class Board:
         self.move_up()
         self.move_down()
 
-    def make_move(self, direction: Direction) -> None:
+    def make_move(self, direction) -> None:
         """
         Set the possible moves based on the current state of the board.
         """
-        if direction not in self.possible_moves:
+        if direction not in [value.value for value in self.possible_moves]:
             self.set_possible_moves()
             raise ValueError("Invalid direction")
 

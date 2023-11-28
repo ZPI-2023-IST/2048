@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
     name="game2048",
-    version="0.0.1",
+    version="0.0.2",
     author="Mateusz",
     description="2048 game",
     packages=setuptools.find_packages(),
