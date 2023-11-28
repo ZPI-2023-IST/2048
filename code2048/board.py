@@ -136,13 +136,13 @@ class Board:
             raise ValueError("Invalid direction")
 
         match direction:
-            case Direction.UP:
+            case Direction.UP.value:
                 self.board = self.possible_moves[Direction.UP]
-            case Direction.DOWN:
+            case Direction.DOWN.value:
                 self.board = self.possible_moves[Direction.DOWN]
-            case Direction.LEFT:
+            case Direction.LEFT.value:
                 self.board = self.possible_moves[Direction.LEFT]
-            case Direction.RIGHT:
+            case Direction.RIGHT.value:
                 self.board = self.possible_moves[Direction.RIGHT]
         self.set_empty_cells()
         self.spawn()
