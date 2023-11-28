@@ -22,7 +22,7 @@ class Game2048(Game):
         """
 
         if move[0] in self.get_moves():
-            self.board.make_move(move)
+            self.board.make_move(move[0])
             return True
         return False
 
