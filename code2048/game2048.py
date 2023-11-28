@@ -10,7 +10,7 @@ class Game2048(Game):
         """
         Provides possible moves as a list of w/s/a/d characters meaning up/down/left/right respectively
         """
-        return list(self.board.possible_moves.key.value())
+        return [key.value for key in self.board.possible_moves.keys()]
 
     def make_move(self, move: tuple) -> bool:
         """
