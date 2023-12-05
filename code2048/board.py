@@ -131,18 +131,18 @@ class Board:
         """
         Set the possible moves based on the current state of the board.
         """
-        if direction not in [value.value for value in self.possible_moves]:
+        if direction.value not in [value.value for value in self.possible_moves]:
             self.set_possible_moves()
             raise ValueError("Invalid direction")
 
         match direction:
-            case Direction.UP.value:
+            case Direction.UP:
                 self.board = self.possible_moves[Direction.UP]
-            case Direction.DOWN.value:
+            case Direction.DOWN:
                 self.board = self.possible_moves[Direction.DOWN]
-            case Direction.LEFT.value:
+            case Direction.LEFT:
                 self.board = self.possible_moves[Direction.LEFT]
-            case Direction.RIGHT.value:
+            case Direction.RIGHT:
                 self.board = self.possible_moves[Direction.RIGHT]
         self.set_empty_cells()
         self.spawn()
