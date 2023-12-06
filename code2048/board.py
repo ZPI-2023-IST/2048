@@ -117,9 +117,6 @@ class Board:
 
         Possible moves are stored in a dictionary with the direction as key and the resulting board as value.
         """
-        if self.game_status() != State.ONGOING:
-            self.possible_moves = {}
-
         self.possible_moves = {}
 
         self.move_left()
@@ -166,10 +163,9 @@ class Board:
                 row.remove(Node(None))
             for i, node in enumerate(row):
                 if i == len(row) - 1:
-                    pass
-                elif node and node.value == row[i + 1].value:
-                    if node.double() == 2048:
-                        print("gg")
+                    continue
+                elif node.value and node.value == row[i + 1].value:
+                    node.double()
                     row[i + 1] = Node(None)
             while Node(None) in row:
                 row.remove(Node(None))
@@ -202,10 +198,10 @@ class Board:
         for row in new_board:
             while Node(None) in row:
                 row.remove(Node(None))
-            for i, node in enumerate(row):
+            for i, node in enumerate(row[::-1]):
                 if i == len(row) - 1:
                     continue
-                elif node and node.value == row[i + 1].value:
+                elif node.value and node.value == row[i + 1].value:
                     node.double()
                     row[i + 1] = Node(None)
             while Node(None) in row:
