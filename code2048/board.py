@@ -128,6 +128,8 @@ class Board:
         """
         Set the possible moves based on the current state of the board.
         """
+        if isinstance(direction, str):
+            direction = Direction(direction)
         if direction.value not in [value.value for value in self.possible_moves]:
             self.set_possible_moves()
             raise ValueError("Invalid direction")
