@@ -148,18 +148,7 @@ class Board:
         self.empty_cells -= 1
         self.set_possible_moves()
 
-    def move_left(self, transposed=False) -> None:
-        """
-        Generates a hypothetical boards state after moving nodes to the left
-        and adds it to possible moves.
-        If transposed is True, the board is transposed before and after the move,
-        simulating a move up.
-        """
-        new_board = copy.deepcopy(self.board)
-        comparable = copy.deepcopy(self.board)
-        if transposed:
-            comparable = self.transpose(comparable)
-            new_board = self.transpose(new_board)
+    def perform_moving(self, new_board) -> list:
         for row in new_board:
             while Node(None) in row:
                 row.remove(Node(None))
@@ -173,6 +162,22 @@ class Board:
                 row.remove(Node(None))
             while len(row) < self.cols:
                 row.append(Node(None))
+        return new_board
+
+    def move_left(self, transposed=False) -> None:
+        """
+        Generates a hypothetical boards state after moving nodes to the left
+        and adds it to possible moves.
+        If transposed is True, the board is transposed before and after the move,
+        simulating a move up.
+        """
+        new_board = copy.deepcopy(self.board)
+        comparable = copy.deepcopy(self.board)
+        if transposed:
+            comparable = self.transpose(comparable)
+            new_board = self.transpose(new_board)
+
+        new_board = self.perform_moving(new_board)
 
         direction = Direction.UP if transposed else Direction.LEFT
         if new_board == comparable:
@@ -197,19 +202,14 @@ class Board:
         if transposed:
             new_board = self.transpose(new_board)
             comparable = self.transpose(comparable)
+
         for row in new_board:
-            while Node(None) in row:
-                row.remove(Node(None))
-            for i, node in enumerate(row[::-1]):
-                if i == len(row) - 1:
-                    continue
-                elif node.value and node.value == row[i + 1].value:
-                    node.double()
-                    row[i + 1] = Node(None)
-            while Node(None) in row:
-                row.remove(Node(None))
-            while len(row) < self.cols:
-                row.insert(0, Node(None))
+            row.reverse()
+
+        new_board = self.perform_moving(new_board)
+
+        for row in new_board:
+            row.reverse()
 
         direction = Direction.DOWN if transposed else Direction.RIGHT
         if new_board == comparable:
