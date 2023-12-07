@@ -98,3 +98,80 @@ class TestBoard(TestCase):
         a.board = a.transpose(a.board)
 
         self.assertEqual(a.board, expected_board)
+
+    def test_move_right(self):
+        board=[
+            [Node(None),Node(None), Node(None),Node(None)],
+            [Node(2),Node(None), Node(None),Node(2)],
+            [Node(None),Node(None), Node(None),Node(2)],
+            [Node(None),Node(None), Node(None),Node(None)],
+        ]
+
+        expected_board = [
+            [Node(None),Node(None), Node(None),Node(None)],
+            [Node(None),Node(None), Node(None),Node(4)],
+            [Node(None),Node(None), Node(None),Node(2)],
+            [Node(None),Node(None), Node(None),Node(None)],
+        ]
+
+        a = Board(board=board)
+        a.move_right()
+        self.assertEqual(a.possible_moves[Direction.RIGHT], expected_board)
+
+        
+    def test_move_left(self):
+        board=[
+            [Node(None),Node(None), Node(None),Node(None)],
+            [Node(2),Node(None), Node(None),Node(2)],
+            [Node(None),Node(None), Node(None),Node(2)],
+            [Node(None),Node(None), Node(None),Node(None)],
+        ]
+
+        expected_board = [
+            [Node(None),Node(None), Node(None),Node(None)],
+            [Node(4),Node(None), Node(None),Node(None)],
+            [Node(2),Node(None), Node(None),Node(None)],
+            [Node(None),Node(None), Node(None),Node(None)],
+        ]
+
+        a = Board(board=board)
+        a.move_left()
+        self.assertEqual(a.possible_moves[Direction.LEFT], expected_board)
+
+    def test_move_up(self):
+        board=[
+            [Node(None),Node(None), Node(None),Node(None)],
+            [Node(2),Node(None), Node(None),Node(2)],
+            [Node(None),Node(None), Node(None),Node(2)],
+            [Node(None),Node(None), Node(None),Node(None)],
+        ]
+
+        expected_board = [
+            [Node(2),Node(None), Node(None),Node(4)],
+            [Node(None),Node(None), Node(None),Node(None)],
+            [Node(None),Node(None), Node(None),Node(None)],
+            [Node(None),Node(None), Node(None),Node(None)],
+        ]
+
+        a = Board(board=board)
+        a.move_up()
+        self.assertEqual(a.possible_moves[Direction.UP], expected_board)
+
+    def test_move_down(self):
+        board=[
+            [Node(None),Node(None), Node(None),Node(None)],
+            [Node(2),Node(None), Node(None),Node(2)],
+            [Node(None),Node(None), Node(None),Node(2)],
+            [Node(None),Node(None), Node(None),Node(None)],
+        ]
+
+        expected_board = [
+            [Node(None),Node(None), Node(None),Node(None)],
+            [Node(None),Node(None), Node(None),Node(None)],
+            [Node(None),Node(None), Node(None),Node(None)],
+            [Node(2),Node(None), Node(None),Node(4)],
+        ]
+
+        a = Board(board=board)
+        a.move_down()
+        self.assertEqual(a.possible_moves[Direction.DOWN], expected_board)
