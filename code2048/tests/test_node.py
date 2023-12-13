@@ -3,7 +3,7 @@ from code2048.node import Node
 
 
 class TestNode(TestCase):
-    def create_node(self):
+    def test_create_node(self):
         with self.assertRaises(ValueError):
             Node(3)
         with self.assertRaises(ValueError):
